@@ -33,7 +33,7 @@ export function MetricsCard({
         <div className="flex-1">
           <p className="text-muted-foreground text-sm font-medium group-hover:text-primary transition-colors duration-300">{title}</p>
           <div className={glowing ? "animate-counter-glow inline-block" : ""}>
-            <p className={cn("text-3xl font-bold mt-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent transition-all duration-300")}>
+            <p className={cn("text-3xl font-bold mt-2 bg-gradient-to-br from-slate-200 to-blue-100 bg-clip-text text-transparent transition-all duration-300")}>
               {format === "currency" ? "$" : ""}
               <AnimatedCounter
                 value={value}

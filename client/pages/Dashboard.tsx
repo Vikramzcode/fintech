@@ -46,7 +46,7 @@ export default function Dashboard() {
         </div>
 
         {/* Key Metrics - 5 Cards Row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid  grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           <MetricsCard
             title="Main Wallet"
             value={displayBalance.mainWallet}

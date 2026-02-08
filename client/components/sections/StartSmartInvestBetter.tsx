@@ -286,7 +286,7 @@ export function StartSmartInvestBetter({
                 <motion.div
                   key={index}
                   className={`relative p-6 sm:p-8 rounded-xl border backdrop-blur-sm transition-all duration-300 group hover:scale-105 cursor-pointer ${cardBg}`}
-                  variants={itemVariants}
+                  // variants={itemVariants}
                   whileHover={{ x: 8 }}
                   transition={{ duration: 0.3 }}
                 >

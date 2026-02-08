@@ -174,307 +174,169 @@ export default function Landing() {
         </nav>
 
         {/* Hero Section */}
-        <section
-          id="intro"
-          className={`pt-24 pb-20 px-4 sm:px-6 lg:px-8 min-h-screen flex items-center justify-center relative overflow-hidden transition-colors duration-300 ${
-            isDarkMode
-              ? "bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950"
-              : "bg-gradient-to-br from-slate-50 via-white to-emerald-50"
-          }`}
+       
+
+       
+     <section
+  id="intro"
+  className={`pt-24 pb-20 px-4 sm:px-6 lg:px-8 min-h-screen flex items-center justify-center relative overflow-hidden transition-colors duration-500 ${
+    isDarkMode
+      ? "bg-gradient-to-br from-[#050b18] via-[#0a192f] to-[#112240]"
+      : "bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50"
+  }`}
+>
+  {/* Glassy Grid Overlay - Retained & Re-colored to Blue */}
+  <motion.div
+    className="absolute inset-0 opacity-[0.1] pointer-events-none"
+    animate={{
+      backgroundPosition: ["0% 0%", "100% 100%"],
+    }}
+    transition={{
+      duration: 40,
+      repeat: Infinity,
+      repeatType: "reverse",
+      ease: "linear",
+    }}
+    style={{
+      backgroundImage: `linear-gradient(0deg, ${isDarkMode ? "rgba(56, 189, 248, 0.2)" : "rgba(37, 99, 235, 0.1)"} 1px, transparent 1px), 
+                       linear-gradient(90deg, ${isDarkMode ? "rgba(56, 189, 248, 0.2)" : "rgba(37, 99, 235, 0.1)"} 1px, transparent 1px)`,
+      backgroundSize: "80px 80px",
+    }}
+  />
+
+  {/* Animated Glassy Orbs - Refined for Navy Theme */}
+  <div
+    className={`absolute inset-0 overflow-hidden pointer-events-none ${isDarkMode ? "opacity-40" : "opacity-20"}`}
+  >
+    <motion.div
+      className="absolute top-20 left-10 w-80 h-80 bg-blue-600 rounded-full mix-blend-screen filter blur-[120px]"
+      animate={{
+        y: [0, -40, 0],
+        x: [0, 30, 0],
+      }}
+      transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+    />
+    <motion.div
+      className="absolute -bottom-8 right-10 w-96 h-96 bg-indigo-500 rounded-full mix-blend-screen filter blur-[140px]"
+      animate={{
+        y: [0, 40, 0],
+        x: [0, -30, 0],
+      }}
+      transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+    />
+  </div>
+
+  {/* Candlestick Pattern - Blue/Indigo Rebrand */}
+  <motion.svg
+    className="absolute bottom-1/4 left-12 w-40 h-40 opacity-20 pointer-events-none hidden md:block"
+    viewBox="0 0 160 160"
+    animate={{ y: [0, -15, 0], opacity: [0.15, 0.25, 0.15] }}
+    transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+  >
+    {[20, 50, 80, 110, 140].map((x, i) => (
+      <g key={x}>
+        <line x1={x} y1={20 + (i*10)} x2={x} y2={90 + (i*5)} stroke={i % 2 === 0 ? "#38bdf8" : "#6366f1"} strokeWidth="2" />
+        <rect x={x-8} y={35 + (i*5)} width="16" height={30 + (i*2)} fill={i % 2 === 0 ? "#38bdf8" : "#6366f1"} opacity="0.4" />
+      </g>
+    ))}
+  </motion.svg>
+
+  {/* Uptrend Line - Cyan Rebrand */}
+  <motion.svg
+    className="absolute top-1/3 right-20 w-48 h-32 opacity-20 pointer-events-none hidden lg:block"
+    viewBox="0 0 200 120"
+    animate={{ x: [0, 10, 0], opacity: [0.1, 0.2, 0.1] }}
+    transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+  >
+    <polyline
+      points="10,100 35,85 60,70 85,55 110,45 135,35 160,20 185,15"
+      fill="none"
+      stroke={isDarkMode ? "#0ea5e9" : "#2563eb"}
+      strokeWidth="2.5"
+      strokeDasharray="4 2"
+    />
+    <circle cx="185" cy="15" r="4" fill="#38bdf8" className="animate-pulse" />
+  </motion.svg>
+
+  {/* Main Content */}
+  <div className="max-w-4xl mx-auto text-center relative z-10">
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+    >
+      <motion.h1
+        className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 bg-gradient-to-r from-blue-400 via-cyan-300 to-indigo-400 bg-clip-text text-transparent"
+        animate={{ opacity: [0.9, 1, 0.9] }}
+        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+      >
+        Professional Trading Platform
+      </motion.h1>
+
+      <motion.p
+        className={`text-xl sm:text-2xl ${isDarkMode ? "text-slate-400" : "text-slate-600"} mb-8 max-w-2xl mx-auto`}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+      >
+        Grow your wealth with our secure, transparent, and user-friendly
+        investment platform. Trusted by thousands of traders worldwide.
+      </motion.p>
+
+      <motion.div
+        className="flex flex-col sm:flex-row gap-4 justify-center"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
+      >
+        {/* Primary Button: Electric Blue */}
+        <motion.button
+          onClick={() => navigate("/login")}
+          className="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg transition-all duration-300 text-lg shadow-lg shadow-blue-900/40"
+          whileHover={{
+            y: -4,
+            boxShadow: "0 20px 40px rgba(37, 99, 235, 0.3)",
+          }}
+          whileTap={{ scale: 0.95 }}
         >
-          {/* Animated Grid Background */}
-          <motion.div
-            className="absolute inset-0 opacity-[0.03] pointer-events-none"
-            animate={{
-              backgroundPosition: ["0% 0%", "100% 100%"],
-            }}
-            transition={{
-              duration: 30,
-              repeat: Infinity,
-              repeatType: "reverse",
-              ease: "linear",
-            }}
-            style={{
-              backgroundImage: `linear-gradient(0deg, ${isDarkMode ? "rgba(16, 185, 129, 0.5)" : "rgba(16, 185, 129, 0.3)"} 1px, transparent 1px), 
-                             linear-gradient(90deg, ${isDarkMode ? "rgba(16, 185, 129, 0.5)" : "rgba(16, 185, 129, 0.3)"} 1px, transparent 1px)`,
-              backgroundSize: "60px 60px",
-            }}
-          />
+          Get Started
+        </motion.button>
 
-          {/* Animated background orbs */}
-          <div
-            className={`absolute inset-0 overflow-hidden pointer-events-none ${isDarkMode ? "opacity-30" : "opacity-10"}`}
-          >
-            <motion.div
-              className="absolute top-20 left-10 w-72 h-72 bg-emerald-500 rounded-full mix-blend-multiply filter blur-3xl"
-              animate={{
-                y: [0, -30, 0],
-                x: [0, 20, 0],
-              }}
-              transition={{
-                duration: 8,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            />
-            <motion.div
-              className="absolute -bottom-8 right-10 w-72 h-72 bg-amber-500 rounded-full mix-blend-multiply filter blur-3xl"
-              animate={{
-                y: [0, 30, 0],
-                x: [0, -20, 0],
-              }}
-              transition={{
-                duration: 10,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: 1,
-              }}
-            />
-          </div>
+        {/* Secondary Button: Glassy Outlined */}
+        <motion.button
+          onClick={() => scrollToSection("services")}
+          className={`px-8 py-4 border-2 backdrop-blur-sm ${
+            isDarkMode 
+              ? "border-blue-500/50 hover:border-blue-400 text-blue-400 bg-blue-500/5" 
+              : "border-blue-600 hover:border-blue-700 text-blue-600"
+          } font-bold rounded-lg transition-all duration-300 text-lg`}
+          whileHover={{
+            y: -4,
+            backgroundColor: isDarkMode ? "rgba(59, 130, 246, 0.1)" : "rgba(59, 130, 246, 0.05)",
+          }}
+          whileTap={{ scale: 0.95 }}
+        >
+          Learn More
+        </motion.button>
+      </motion.div>
+    </motion.div>
+  </div>
 
-          {/* Candlestick Pattern Background - Left Side */}
-          <motion.svg
-            className="absolute bottom-1/4 left-12 w-40 h-40 opacity-8 pointer-events-none"
-            viewBox="0 0 160 160"
-            animate={{ y: [0, -15, 0], opacity: [0.08, 0.12, 0.08] }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          >
-            {/* Candlestick 1 */}
-            <line
-              x1="20"
-              y1="40"
-              x2="20"
-              y2="90"
-              stroke={isDarkMode ? "#10b981" : "#059669"}
-              strokeWidth="2"
-            />
-            <rect
-              x="12"
-              y="50"
-              width="16"
-              height="30"
-              fill={isDarkMode ? "#10b981" : "#059669"}
-              opacity="0.6"
-            />
-            {/* Candlestick 2 */}
-            <line
-              x1="50"
-              y1="60"
-              x2="50"
-              y2="100"
-              stroke={isDarkMode ? "#ef4444" : "#dc2626"}
-              strokeWidth="2"
-            />
-            <rect
-              x="42"
-              y="65"
-              width="16"
-              height="25"
-              fill={isDarkMode ? "#ef4444" : "#dc2626"}
-              opacity="0.6"
-            />
-            {/* Candlestick 3 */}
-            <line
-              x1="80"
-              y1="35"
-              x2="80"
-              y2="95"
-              stroke={isDarkMode ? "#10b981" : "#059669"}
-              strokeWidth="2"
-            />
-            <rect
-              x="72"
-              y="40"
-              width="16"
-              height="45"
-              fill={isDarkMode ? "#10b981" : "#059669"}
-              opacity="0.6"
-            />
-            {/* Candlestick 4 */}
-            <line
-              x1="110"
-              y1="50"
-              x2="110"
-              y2="90"
-              stroke={isDarkMode ? "#ef4444" : "#dc2626"}
-              strokeWidth="2"
-            />
-            <rect
-              x="102"
-              y="55"
-              width="16"
-              height="30"
-              fill={isDarkMode ? "#ef4444" : "#dc2626"}
-              opacity="0.6"
-            />
-            {/* Candlestick 5 */}
-            <line
-              x1="140"
-              y1="30"
-              x2="140"
-              y2="100"
-              stroke={isDarkMode ? "#10b981" : "#059669"}
-              strokeWidth="2"
-            />
-            <rect
-              x="132"
-              y="35"
-              width="16"
-              height="55"
-              fill={isDarkMode ? "#10b981" : "#059669"}
-              opacity="0.6"
-            />
-          </motion.svg>
+  {/* Scroll Indicator - Blue Accent */}
+  <motion.div
+    className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+    animate={{ y: [0, 10, 0] }}
+    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+  >
+    <ChevronDown
+      className={`w-6 h-6 ${isDarkMode ? "text-blue-500/50" : "text-blue-600/50"}`}
+    />
+  </motion.div>
+</section>
 
-          {/* Uptrend Line - Right Side */}
-          <motion.svg
-            className="absolute top-1/3 right-20 w-48 h-32 opacity-6 pointer-events-none"
-            viewBox="0 0 200 120"
-            animate={{ x: [0, 10, 0], opacity: [0.06, 0.1, 0.06] }}
-            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <polyline
-              points="10,100 35,85 60,70 85,55 110,45 135,35 160,20 185,15"
-              fill="none"
-              stroke={isDarkMode ? "#10b981" : "#059669"}
-              strokeWidth="2.5"
-              opacity="0.8"
-            />
-            {/* Data points */}
-            <circle
-              cx="10"
-              cy="100"
-              r="2.5"
-              fill={isDarkMode ? "#10b981" : "#059669"}
-            />
-            <circle
-              cx="60"
-              cy="70"
-              r="2.5"
-              fill={isDarkMode ? "#10b981" : "#059669"}
-            />
-            <circle
-              cx="110"
-              cy="45"
-              r="2.5"
-              fill={isDarkMode ? "#10b981" : "#059669"}
-            />
-            <circle
-              cx="185"
-              cy="15"
-              r="2.5"
-              fill={isDarkMode ? "#fbbf24" : "#f59e0b"}
-            />
-          </motion.svg>
-
-          {/* Pulsing Radar Ring - Center */}
-          <motion.div
-            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full border border-emerald-500/30 pointer-events-none"
-            animate={{
-              scale: [1, 1.4, 1],
-              opacity: [0.4, 0.1, 0.4],
-            }}
-            transition={{
-              duration: 5,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          />
-
-          {/* Secondary Radar Ring */}
-          <motion.div
-            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-full border border-amber-500/15 pointer-events-none"
-            animate={{
-              scale: [1, 1.3, 1],
-              opacity: [0.3, 0.05, 0.3],
-            }}
-            transition={{
-              duration: 6,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 0.5,
-            }}
-          />
-
-          <div className="max-w-4xl mx-auto text-center relative z-10">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-            >
-              <motion.h1
-                className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 bg-gradient-to-r from-emerald-500 via-emerald-300 to-amber-500 bg-clip-text text-transparent"
-                animate={{ opacity: [0.9, 1, 0.9] }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              >
-                Professional Trading Platform
-              </motion.h1>
-
-              <motion.p
-                className={`text-xl sm:text-2xl ${mutedClasses} mb-8 max-w-2xl mx-auto`}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-              >
-                Grow your wealth with our secure, transparent, and user-friendly
-                investment platform. Trusted by thousands of traders worldwide.
-              </motion.p>
-
-              <motion.div
-                className="flex flex-col sm:flex-row gap-4 justify-center"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
-              >
-                <motion.button
-                  onClick={() => navigate("/login")}
-                  className="px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition-all duration-200 text-lg shadow-lg hover:shadow-emerald-500/50 hover:shadow-xl"
-                  whileHover={{
-                    y: -4,
-                    boxShadow: isDarkMode
-                      ? "0 20px 40px rgba(16, 185, 129, 0.4)"
-                      : "0 20px 40px rgba(16, 185, 129, 0.3)",
-                  }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Get Started
-                </motion.button>
-
-                <motion.button
-                  onClick={() => scrollToSection("services")}
-                  className={`px-8 py-4 border-2 ${isDarkMode ? "border-emerald-500 hover:border-emerald-400 text-emerald-400" : "border-emerald-600 hover:border-emerald-700 text-emerald-600"} font-bold rounded-lg transition-all duration-200 text-lg hover:bg-emerald-500/10`}
-                  whileHover={{
-                    y: -4,
-                    boxShadow: isDarkMode
-                      ? "0 10px 30px rgba(16, 185, 129, 0.2)"
-                      : "0 10px 30px rgba(16, 185, 129, 0.15)",
-                  }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Learn More
-                </motion.button>
-              </motion.div>
-            </motion.div>
-          </div>
-
-          {/* Scroll indicator */}
-          <motion.div
-            className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-            animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <ChevronDown
-              className={`w-6 h-6 ${isDarkMode ? "text-emerald-500/50" : "text-emerald-600/50"}`}
-            />
-          </motion.div>
-        </section>
 
         {/* Portfolio / Stats Section */}
-        <section
+      <section
           id="portfolio"
           className={`py-20 px-4 sm:px-6 lg:px-8 transition-colors duration-300 ${
             isDarkMode
@@ -555,7 +417,7 @@ export default function Landing() {
               ))}
             </div>
           </div>
-        </section>
+        </section>  
 
         {/* Start Smart, Invest Better Section */}
         <StartSmartInvestBetter isDarkMode={isDarkMode} />
@@ -722,7 +584,7 @@ export default function Landing() {
           id="about"
           className={`py-20 px-4 sm:px-6 lg:px-8 transition-colors duration-300 ${
             isDarkMode
-              ? "bg-gradient-to-b from-slate-900 via-purple-950/30 to-slate-900"
+              ? "bg-gradient-to-b from-slate-900 via-blue-950/30 to-slate-900"
               : "bg-gradient-to-b from-slate-100 via-purple-50/30 to-slate-100"
           }`}
         >
@@ -734,14 +596,14 @@ export default function Landing() {
                   className={`text-4xl sm:text-5xl font-bold mb-6 ${isDarkMode ? "text-slate-100" : "text-slate-900"}`}
                 >
                   About{" "}
-                  <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-blue-900 to-blue-400 bg-clip-text text-transparent">
                     TradePro
                   </span>
                 </h2>
 
                 <div className="space-y-6">
                   <div>
-                    <h3 className="text-xl font-bold mb-3 bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                    <h3 className="text-xl font-bold mb-3 bg-gradient-to-r from-blue-500 to-blue-300 bg-clip-text text-transparent">
                       Our Story
                     </h3>
                     <p className={`${mutedClasses} leading-relaxed`}>
@@ -754,7 +616,7 @@ export default function Landing() {
                   </div>
 
                   <div>
-                    <h3 className="text-xl font-bold mb-3 bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                    <h3 className="text-xl font-bold mb-3 bg-gradient-to-r  from-blue-500 to-blue-300 bg-clip-text text-transparent">
                       Our Mission
                     </h3>
                     <p className={`${mutedClasses} leading-relaxed`}>
@@ -766,7 +628,7 @@ export default function Landing() {
                   </div>
 
                   <div>
-                    <h3 className="text-xl font-bold mb-3 bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                    <h3 className="text-xl font-bold mb-3 bg-gradient-to-r  from-blue-500 to-blue-300 bg-clip-text text-transparent">
                       Our Vision
                     </h3>
                     <p className={`${mutedClasses} leading-relaxed`}>

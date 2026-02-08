@@ -152,7 +152,7 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "counter-glow": "counter-glow 2s ease-in-out infinite",
+        // "counter-glow": "counter-glow 2s ease-in-out infinite",
         "fade-in": "fade-in 0.3s ease-out",
         "slide-up": "slide-up 0.3s ease-out",
         "gradient-shift": "gradient-shift 4s ease infinite",
