@@ -120,7 +120,7 @@ export function OurJourney({ isDarkMode }: OurJourneyProps) {
               <motion.div
                 key={index}
                 className={`relative flex ${index % 2 === 0 ? "flex-col lg:flex-row-reverse" : "flex-col lg:flex-row"} items-center gap-4 lg:gap-8`}
-                variants={itemVariants}
+                // variants={itemVariants}
               >
                 {/* Content Card */}
                 <motion.div
@@ -165,7 +165,7 @@ export function OurJourney({ isDarkMode }: OurJourneyProps) {
                   initial={{ scale: 0 }}
                   whileInView={{ scale: 1 }}
                   viewport={{ once: true }}
-                  transition={{ delay: index * 0.2, duration: 0.5 }}
+                  // transition={{ delay: index * 0.2, duration: 0.5 }}
                 >
                   <span className="text-white font-bold text-sm sm:text-base text-center px-2">
                     {item.year}

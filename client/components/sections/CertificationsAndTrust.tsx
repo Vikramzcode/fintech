@@ -98,7 +98,7 @@ export function CertificationsAndTrust({
               <motion.div
                 key={index}
                 className={`relative p-8 rounded-xl border backdrop-blur-sm transition-all duration-300 group hover:scale-105 cursor-pointer ${cardBg}`}
-                variants={itemVariants}
+                // variants={itemVariants}
                 whileHover={{ y: -4 }}
                 transition={{ duration: 0.3 }}
               >

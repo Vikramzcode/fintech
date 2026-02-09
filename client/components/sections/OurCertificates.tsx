@@ -107,7 +107,7 @@ export function OurCertificates({ isDarkMode }: OurCertificatesProps) {
               <motion.div
                 key={index}
                 className={`group relative h-full rounded-xl border backdrop-blur-sm transition-all duration-300 overflow-hidden cursor-pointer ${cardBg}`}
-                variants={itemVariants}
+                // variants={itemVariants}
                 whileHover={{
                   y: -8,
                   boxShadow: isDarkMode

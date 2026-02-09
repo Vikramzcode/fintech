@@ -102,7 +102,7 @@ export function OurTeam({ isDarkMode }: OurTeamProps) {
             <motion.div
               key={index}
               className={`group relative p-6 rounded-xl border backdrop-blur-sm transition-all duration-300 cursor-pointer ${cardBg}`}
-              variants={itemVariants}
+              // variants={itemVariants}
               whileHover={{ y: -8, scale: 1.02 }}
               transition={{ duration: 0.3 }}
             >
