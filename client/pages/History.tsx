@@ -1,18 +1,37 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { mockTransactions } from "@/mock/data";
 import { GlassCard } from "@/components/common/GlassCard";
 import { formatCurrency, formatDate } from "@/utils/formatting";
 import { Eye, Filter } from "lucide-react";
+import { apiClient } from "@/services/api";
+import { Transaction } from "@/context/WalletContext";
 
 export default function History() {
-  const [filter, setFilter] = useState<"all" | "deposit" | "withdrawal" | "profit">("all");
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [filter, setFilter] = useState<
+    "all" | "deposit" | "withdrawal" | "profit"
+  >("all");
 
-  const filteredTransactions =
-    filter === "all"
-      ? mockTransactions
-      : mockTransactions.filter((t) =>
-          filter === "withdrawal" ? t.type === "withdrawal" : t.type === filter
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        setLoading(true);
+        const res = await apiClient.get<{ data: Transaction[] }>(
+          "/users/transaction/history",
         );
+
+        setTransactions(res.data.data); // <-- store API data
+      } catch (error) {
+        console.error("Failed to fetch transactions", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTransactions();
+  }, []);
 
   return (
     <main className="p-4 lg:p-8 lg:ml-64 min-h-screen">
@@ -56,7 +75,7 @@ export default function History() {
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
-              {filteredTransactions.map((txn) => (
+              {transactions.map((txn) => (
                 <tr key={txn.id} className="hover:bg-card/50 transition-colors">
                   <td className="py-4 px-4">
                     <div>
@@ -109,9 +128,12 @@ export default function History() {
             </tbody>
           </table>
 
-          {filteredTransactions.length === 0 && (
+          {transactions.length === 0 && (
             <div className="text-center py-12">
-              <Filter className="mx-auto text-muted-foreground opacity-50 mb-3" size={32} />
+              <Filter
+                className="mx-auto text-muted-foreground opacity-50 mb-3"
+                size={32}
+              />
               <p className="text-muted-foreground">No transactions found</p>
             </div>
           )}
@@ -123,9 +145,9 @@ export default function History() {
             <p className="text-muted-foreground text-sm">Total Deposits</p>
             <p className="text-2xl font-bold mt-2 text-profit">
               {formatCurrency(
-                mockTransactions
+                transactions
                   .filter((t) => t.type === "deposit")
-                  .reduce((sum, t) => sum + t.amount, 0)
+                  .reduce((sum, t) => sum + t.amount, 0),
               )}
             </p>
           </GlassCard>
@@ -133,9 +155,9 @@ export default function History() {
             <p className="text-muted-foreground text-sm">Total Withdrawn</p>
             <p className="text-2xl font-bold mt-2 text-loss">
               {formatCurrency(
-                mockTransactions
+                transactions
                   .filter((t) => t.type === "withdrawal")
-                  .reduce((sum, t) => sum + t.amount, 0)
+                  .reduce((sum, t) => sum + t.amount, 0),
               )}
             </p>
           </GlassCard>
@@ -143,13 +165,13 @@ export default function History() {
             <p className="text-muted-foreground text-sm">Total Fees</p>
             <p className="text-2xl font-bold mt-2">
               {formatCurrency(
-                mockTransactions.reduce((sum, t) => sum + t.fee, 0)
+                transactions.reduce((sum, t) => sum + t.fee, 0),
               )}
             </p>
           </GlassCard>
           <GlassCard heavy className="p-6">
             <p className="text-muted-foreground text-sm">Total Transactions</p>
-            <p className="text-2xl font-bold mt-2">{mockTransactions.length}</p>
+            <p className="text-2xl font-bold mt-2">{transactions.length}</p>
           </GlassCard>
         </div>
       </div>

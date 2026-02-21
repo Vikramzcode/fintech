@@ -15,12 +15,12 @@ const statusStyles = {
 };
 
 const statusLabels = {
-  active: "Active",
-  inactive: "Inactive",
-  pending: "Pending",
-  verified: "Verified",
-  completed: "Completed",
-  failed: "Failed",
+  active: "active",
+  inactive: "inactive",
+  pending: "pending",
+  verified: "verified",
+  completed: "completed",
+  failed: "failed",
 };
 
 export function StatusBadge({ status, className }: StatusBadgeProps) {
