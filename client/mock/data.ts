@@ -10,13 +10,13 @@ export const mockUser: User = {
   referralCode: "REF0ABCD1234",
 };
 
-export const mockWalletBalance: WalletBalance = {
-  mainWallet: 5000.0,
-  activeDeposit: 46500.0,
-  profitBalance: 1200.0,
-  referralBonus: 300.0,
-  totalInvestment: 46500.0,
-};
+// export const mockWalletBalance: WalletBalance = {
+//   mainWallet: 5000.0,
+//   activeDeposit: 46500.0,
+//   profitBalance: 1200.0,
+//   referralBonus: 300.0,
+//   totalInvestment: 46500.0,
+// };
 
 export const mockTransactions: Transaction[] = [
   {

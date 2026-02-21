@@ -8,7 +8,8 @@ import { SimpleChart } from "@/components/charts/SimpleChart";
 import { MarketCandleChart } from "@/components/charts/MarketCandleChart";
 import { GlassCard } from "@/components/common/GlassCard";
 import { StatusBadge } from "@/components/common/StatusBadge";
-import { mockChartData, mockWalletBalance } from "@/mock/data";
+import { mockChartData } from "@/mock/data";
+import { useEffect } from "react";
 import {
   Wallet,
   TrendingUp,
@@ -20,11 +21,16 @@ import {
 export default function Dashboard() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { balance } = useWallet();
+  const { balance, fetchWalletBalance } = useWallet();
   const { setActivationModalOpen } = useApp();
 
+  useEffect(() => {
+    if (user) {
+      fetchWalletBalance();
+    }
+  }, [user]);
   // Use mock data if balance is not loaded
-  const displayBalance = balance.mainWallet > 0 ? balance : mockWalletBalance;
+  const displayBalance = balance;
 
   const handleAction = (path: string) => {
     if (user?.accountStatus === "inactive") {
@@ -33,7 +39,6 @@ export default function Dashboard() {
       navigate(path);
     }
   };
-
   return (
     <main className="p-4 lg:p-8 lg:ml-64 min-h-screen">
       <div className="w-full max-w-7xl mx-auto space-y-8 animate-fade-in">
@@ -84,7 +89,9 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
           {/* Live Profit Ticker - 4 columns */}
           <div className="md:col-span-4">
-            <ProfitTicker baseProfitPerDay={displayBalance.profitBalance / 30} />
+            <ProfitTicker
+              baseProfitPerDay={displayBalance.profitBalance / 30}
+            />
           </div>
 
           {/* Investment Growth Chart - 8 columns */}
@@ -114,9 +121,14 @@ export default function Dashboard() {
                     <p className="text-sm text-muted-foreground font-medium group-hover:text-emerald-500 transition-colors">
                       Deposit Funds
                     </p>
-                    <p className="text-2xl font-bold bg-gradient-to-r from-emerald-500 to-green-500 bg-clip-text text-transparent mt-2 group-hover:animate-float">→</p>
+                    <p className="text-2xl font-bold bg-gradient-to-r from-emerald-500 to-green-500 bg-clip-text text-transparent mt-2 group-hover:animate-float">
+                      →
+                    </p>
                   </div>
-                  <Wallet className="text-emerald-500/50 group-hover:text-emerald-500 transition-all group-hover:scale-110" size={24} />
+                  <Wallet
+                    className="text-emerald-500/50 group-hover:text-emerald-500 transition-all group-hover:scale-110"
+                    size={24}
+                  />
                 </div>
                 <p className="text-xs text-muted-foreground mt-4 group-hover:text-foreground transition-colors">
                   Add funds to your account
@@ -126,7 +138,10 @@ export default function Dashboard() {
           </div>
 
           {/* Withdraw Profit Card */}
-          <div className="md:col-span-4 animate-slide-in" style={{ animationDelay: "0.1s" }}>
+          <div
+            className="md:col-span-4 animate-slide-in"
+            style={{ animationDelay: "0.1s" }}
+          >
             <button
               onClick={() => handleAction("/wallet/withdraw")}
               className="w-full h-full group"
@@ -140,9 +155,14 @@ export default function Dashboard() {
                     <p className="text-sm text-muted-foreground font-medium group-hover:text-blue-500 transition-colors">
                       Withdraw Profit
                     </p>
-                    <p className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-cyan-500 bg-clip-text text-transparent mt-2 group-hover:animate-float">→</p>
+                    <p className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-cyan-500 bg-clip-text text-transparent mt-2 group-hover:animate-float">
+                      →
+                    </p>
                   </div>
-                  <TrendingUp className="text-blue-500/50 group-hover:text-blue-500 transition-all group-hover:scale-110" size={24} />
+                  <TrendingUp
+                    className="text-blue-500/50 group-hover:text-blue-500 transition-all group-hover:scale-110"
+                    size={24}
+                  />
                 </div>
                 <p className="text-xs text-muted-foreground mt-4 group-hover:text-foreground transition-colors">
                   Withdraw your earnings
@@ -152,7 +172,10 @@ export default function Dashboard() {
           </div>
 
           {/* Referral Program Card */}
-          <div className="md:col-span-4 animate-slide-in" style={{ animationDelay: "0.2s" }}>
+          <div
+            className="md:col-span-4 animate-slide-in"
+            style={{ animationDelay: "0.2s" }}
+          >
             <button
               onClick={() => navigate("/referral")}
               className="w-full h-full group"
@@ -166,9 +189,14 @@ export default function Dashboard() {
                     <p className="text-sm text-muted-foreground font-medium group-hover:text-amber-500 transition-colors">
                       Referral Program
                     </p>
-                    <p className="text-2xl font-bold bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent mt-2 group-hover:animate-float">→</p>
+                    <p className="text-2xl font-bold bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent mt-2 group-hover:animate-float">
+                      →
+                    </p>
                   </div>
-                  <Gift className="text-amber-500/50 group-hover:text-amber-500 transition-all group-hover:scale-110" size={24} />
+                  <Gift
+                    className="text-amber-500/50 group-hover:text-amber-500 transition-all group-hover:scale-110"
+                    size={24}
+                  />
                 </div>
                 <p className="text-xs text-muted-foreground mt-4 group-hover:text-foreground transition-colors">
                   Earn by referring friends
@@ -187,7 +215,11 @@ export default function Dashboard() {
         <GlassCard heavy className="p-6 md:p-8 animate-fade-in">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-semibold">Account Information</h3>
-            <StatusBadge status={user?.accountStatus === "inactive" ? "inactive" : "active"} />
+            <StatusBadge
+              status={
+                user?.accountStatus === "inactive" ? "inactive" : "active"
+              }
+            />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div>
@@ -195,7 +227,7 @@ export default function Dashboard() {
                 Account Status
               </p>
               <p className="text-base font-semibold mt-2 capitalize">
-                {user?.accountStatus || "Inactive"}
+                {user?.accountStatus || "inactive"}
               </p>
             </div>
             <div>
@@ -224,7 +256,9 @@ export default function Dashboard() {
               <p className="text-xs text-muted-foreground uppercase tracking-wide font-semibold">
                 Email
               </p>
-              <p className="text-base font-semibold mt-2 truncate">{user?.email}</p>
+              <p className="text-base font-semibold mt-2 truncate">
+                {user?.email}
+              </p>
             </div>
           </div>
         </GlassCard>

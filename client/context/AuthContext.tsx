@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useReducer, ReactNode } from "react";
-
+import { apiClient } from "@/services/api";
+import React, { createContext, useContext, useReducer, ReactNode,useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 export interface User {
   id: string;
   email: string;
@@ -9,8 +10,15 @@ export interface User {
   referralCode: string;
 }
 
+interface LoginResponse {
+  user: User;
+  token: string;
+  refreshToken: string;
+}
 export interface AuthState {
   user: User | null;
+  token: string | null;
+  refreshToken: string | null;
   isLoading: boolean;
   isAuthenticated: boolean;
   error: string | null;
@@ -18,7 +26,7 @@ export interface AuthState {
 
 type AuthAction =
   | { type: "LOGIN_START" }
-  | { type: "LOGIN_SUCCESS"; payload: User }
+  | { type: "LOGIN_SUCCESS"; payload: LoginResponse }
   | { type: "LOGIN_FAIL"; payload: string }
   | { type: "LOGOUT" }
   | { type: "SIGNUP_START" }
@@ -28,6 +36,8 @@ type AuthAction =
 
 const initialState: AuthState = {
   user: null,
+  token: null,
+  refreshToken: null,
   isLoading: false,
   isAuthenticated: false,
   error: null,
@@ -39,6 +49,15 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
     case "SIGNUP_START":
       return { ...state, isLoading: true, error: null };
     case "LOGIN_SUCCESS":
+      return {
+        ...state,
+        isLoading: false,
+        isAuthenticated: true,
+        user: action.payload.user,
+        token: action.payload.token,
+        refreshToken: action.payload.refreshToken,
+        error: null,
+      };
     case "SIGNUP_SUCCESS":
       return {
         ...state,
@@ -73,27 +92,69 @@ interface AuthContextType extends AuthState {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(authReducer, initialState);
+ useEffect(() => {
+  const token = localStorage.getItem("auth_token");
+  const user = localStorage.getItem("auth_user");
+  const refreshToken = localStorage.getItem("refresh_token");
 
+  if (token && user) {
+    dispatch({
+      type: "LOGIN_SUCCESS",
+      payload: {
+        user: JSON.parse(user),
+        token,
+        refreshToken,
+      } as any,
+    });
+  }
+}, []);
   const login = async (email: string, password: string) => {
     dispatch({ type: "LOGIN_START" });
+
     try {
-      // TODO: Replace with actual API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      const mockUser: User = {
-        id: "user-123",
+      const res = await apiClient.post<LoginResponse>("/auth/login", {
         email,
-        name: email.split("@")[0],
-        accountStatus: "active",
-        createdAt: new Date(),
-        referralCode: "REF" + Math.random().toString(36).substr(2, 9).toUpperCase(),
+        password,
+      });
+
+      const { user,  token, refreshToken } = res.data;
+      // store in locastoreage
+      localStorage.setItem("auth_token", token);
+      localStorage.setItem("refresh_token", refreshToken);
+      localStorage.setItem('auth_user',JSON.stringify(user))
+      // Decode token
+      const decoded: any = jwtDecode(token);
+
+      // decoded will look like:
+      // { userId, iat, exp }
+
+      const authuser: User = {
+        id: decoded.userId,
+        email: email,
+        name: res.data.user.name,
+        accountStatus: res.data.user.accountStatus,
+        createdAt: new Date(decoded.iat * 1000),
+        referralCode: "",
       };
-      dispatch({ type: "LOGIN_SUCCESS", payload: mockUser });
+
+      console.log(authuser.accountStatus);
+
+      dispatch({
+        type: "LOGIN_SUCCESS",
+        payload: {
+          authuser,
+          token,
+          refreshToken,
+        } as any,
+      });
     } catch (error) {
+      console.log(error);
       dispatch({
         type: "LOGIN_FAIL",
-        payload: error instanceof Error ? error.message : "Login failed",
+        payload: error instanceof Error ? error.message : "Login Failed",
       });
     }
   };
@@ -109,7 +170,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         name,
         accountStatus: "inactive",
         createdAt: new Date(),
-        referralCode: "REF" + Math.random().toString(36).substr(2, 9).toUpperCase(),
+        referralCode:
+          "REF" + Math.random().toString(36).substr(2, 9).toUpperCase(),
       };
       dispatch({ type: "SIGNUP_SUCCESS", payload: mockUser });
     } catch (error) {
@@ -121,6 +183,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = () => {
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("auth_user");
     dispatch({ type: "LOGOUT" });
   };
 
