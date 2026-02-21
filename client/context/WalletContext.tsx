@@ -1,11 +1,22 @@
 import React, { createContext, useContext, useReducer, ReactNode } from "react";
-
+import { apiClient } from "@/services/api";
+import { useAuth } from "./AuthContext";
 export interface WalletBalance {
   mainWallet: number;
+  inscrease_mainWallet : number;
+  inscrease_percentage_mainWallet_possitive : boolean;
   activeDeposit: number;
+  inscrease_percentage_activeDeposit: number;
+  increase_activeDeposit_positive :boolean;
   profitBalance: number;
+  inscrease_percentage_profitBalance: number;
+  inscrease_profitBalance_positive: boolean;
   referralBonus: number;
+  inscrease_percentage_referralBonus: number;
+  inscrease_referralBonus_positive: boolean;
   totalInvestment: number;
+  inscrease_percentage_totalInvestment: number;
+  inscrease_percentage_totalInvestment_positive: boolean;
 }
 
 export interface Transaction {
@@ -37,10 +48,20 @@ type WalletAction =
 const initialState: WalletState = {
   balance: {
     mainWallet: 0,
-    activeDeposit: 0,
-    profitBalance: 0,
-    referralBonus: 0,
-    totalInvestment: 0,
+  inscrease_mainWallet : 0,
+  inscrease_percentage_mainWallet_possitive : false,
+  activeDeposit: 0,
+  inscrease_percentage_activeDeposit: 0,
+  increase_activeDeposit_positive :false,
+  profitBalance: 0,
+  inscrease_percentage_profitBalance: 0,
+  inscrease_profitBalance_positive: false,
+  referralBonus:0,
+  inscrease_percentage_referralBonus: 0,
+  inscrease_referralBonus_positive: false,
+  totalInvestment: 0,
+  inscrease_percentage_totalInvestment: 0,
+  inscrease_percentage_totalInvestment_positive:false,
   },
   transactions: [],
   isLoading: false,
@@ -76,15 +97,41 @@ interface WalletContextType extends WalletState {
   updateBalance: (partial: Partial<WalletBalance>) => void;
   addTransaction: (transaction: Transaction) => void;
   getTransactionHistory: () => Promise<void>;
+  fetchWalletBalance: () => Promise<void>; // 👈 add this
 }
 
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
 
 export function WalletProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(walletReducer, initialState);
+  const { user } = useAuth();
 
   const updateBalance = (partial: Partial<WalletBalance>) => {
     dispatch({ type: "UPDATE_BALANCE", payload: partial });
+  };
+
+  const fetchWalletBalance = async () => {
+    dispatch({ type: "SET_LOADING", payload: true });
+
+    try {
+      const res = await apiClient.get<WalletBalance>(`/users/wallet/balance`);
+
+      dispatch({
+        type: "SET_BALANCE",
+        payload: res.data,
+      });
+
+      dispatch({ type: "SET_LOADING", payload: false });
+    } catch (error) {
+      dispatch({
+        type: "SET_ERROR",
+        payload:
+          error instanceof Error
+            ? error.message
+            : "Failed to load wallet balance",
+      });
+      dispatch({ type: "SET_LOADING", payload: false });
+    }
   };
 
   const addTransaction = (transaction: Transaction) => {
@@ -100,7 +147,10 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       dispatch({
         type: "SET_ERROR",
-        payload: error instanceof Error ? error.message : "Failed to load transactions",
+        payload:
+          error instanceof Error
+            ? error.message
+            : "Failed to load transactions",
       });
       dispatch({ type: "SET_LOADING", payload: false });
     }
@@ -111,9 +161,12 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     updateBalance,
     addTransaction,
     getTransactionHistory,
+    fetchWalletBalance,
   };
 
-  return <WalletContext.Provider value={value}>{children}</WalletContext.Provider>;
+  return (
+    <WalletContext.Provider value={value}>{children}</WalletContext.Provider>
+  );
 }
 
 export function useWallet() {

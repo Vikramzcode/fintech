@@ -1,20 +1,38 @@
-import { useState } from "react";
-import { mockReferralData } from "@/mock/data";
+import { useEffect, useState } from "react";
 import { GlassCard } from "@/components/common/GlassCard";
 import { Copy, Check, Gift, TrendingUp } from "lucide-react";
 import { formatCurrency } from "@/utils/formatting";
+import { apiClient } from "@/services/api";
+import { ReferralResponse } from "@/types/referral.types.tsx";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Referral() {
   const [copied, setCopied] = useState(false);
-
+  const {user} = useAuth();
+const [mockReferralData, setMockReferralData] = useState<ReferralResponse | null>(null)
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(mockReferralData.referralLink);
+    navigator.clipboard.writeText(mockReferralData?.referralLink);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+useEffect(() => {
+  const fetchReferralData = async () => {
+    try {
+      const res = await apiClient.get<any>(
+        `/referrals/${user.id}`
+      )
+      console.log(res.data)
+      setMockReferralData(res.data)
+      console.log(mockReferralData)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+  fetchReferralData()
+}, [])
 
   const progress =
-    (mockReferralData.totalReferred / mockReferralData.nextRankTarget) * 100;
+    (mockReferralData?.totalReferred / mockReferralData?.nextRankTarget) * 100;
 
   return (
     <main className="p-4 lg:p-8 lg:ml-64 min-h-screen">
@@ -32,7 +50,7 @@ export default function Referral() {
             <p className="text-muted-foreground text-sm font-medium">
               Total Referrals
             </p>
-            <p className="text-3xl font-bold mt-2">{mockReferralData.totalReferred}</p>
+            <p className="text-3xl font-bold mt-2">{mockReferralData?.totalReferred}</p>
             <p className="text-xs text-muted-foreground mt-2">Friends invited</p>
           </GlassCard>
 
@@ -41,7 +59,7 @@ export default function Referral() {
               Bonus Earned
             </p>
             <p className="text-3xl font-bold text-profit mt-2">
-              {formatCurrency(mockReferralData.totalBonus)}
+              {formatCurrency(mockReferralData?.totalBonus)}
             </p>
             <p className="text-xs text-muted-foreground mt-2">From referrals</p>
           </GlassCard>
@@ -49,7 +67,7 @@ export default function Referral() {
           <GlassCard heavy className="p-6">
             <p className="text-muted-foreground text-sm font-medium">Rank</p>
             <p className="text-2xl font-bold text-accent mt-2">
-              {mockReferralData.rank}
+              {mockReferralData?.rank}
             </p>
             <p className="text-xs text-muted-foreground mt-2">Next milestone</p>
           </GlassCard>
@@ -65,7 +83,7 @@ export default function Referral() {
           <div className="flex gap-2">
             <input
               type="text"
-              value={mockReferralData.referralLink}
+              value={mockReferralData?.referralLink}
               readOnly
               className="flex-1 bg-input border border-white/10 rounded-lg px-4 py-3 text-sm focus:outline-none"
             />
@@ -97,9 +115,9 @@ export default function Referral() {
 
           <div>
             <div className="flex justify-between mb-3">
-              <span className="text-sm font-semibold">{mockReferralData.rank}</span>
+              <span className="text-sm font-semibold">{mockReferralData?.rank}</span>
               <span className="text-sm text-muted-foreground">
-                {mockReferralData.totalReferred} / {mockReferralData.nextRankTarget}
+                {mockReferralData?.totalReferred} / {mockReferralData?.nextRankTarget}
               </span>
             </div>
             <div className="w-full bg-card rounded-full h-3 overflow-hidden border border-white/10">
@@ -109,7 +127,7 @@ export default function Referral() {
               />
             </div>
             <p className="text-xs text-muted-foreground mt-3">
-              Invite {mockReferralData.nextRankTarget - mockReferralData.totalReferred} more friends to
+              Invite {mockReferralData?.nextRankTarget - mockReferralData?.totalReferred} more friends to
               reach Gold Partner
             </p>
           </div>
@@ -139,7 +157,7 @@ export default function Referral() {
           <h3 className="text-lg font-semibold">Recent Referrals</h3>
 
           <div className="space-y-3">
-            {mockReferralData.referrals.map((ref) => (
+            {mockReferralData?.referrals.map((ref) => (
               <div
                 key={ref.id}
                 className="flex items-center justify-between p-4 bg-card/50 rounded-lg border border-white/10 hover:border-white/20 transition-colors"

@@ -1,6 +1,7 @@
 import axios, { AxiosInstance, AxiosError } from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5173/api";
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 class ApiService {
   private instance: AxiosInstance;
@@ -25,7 +26,7 @@ class ApiService {
       },
       (error) => {
         return Promise.reject(error);
-      }
+      },
     );
 
     // Response interceptor
@@ -48,7 +49,7 @@ class ApiService {
           message: message || "An error occurred",
           data: error.response?.data,
         });
-      }
+      },
     );
   }
 
