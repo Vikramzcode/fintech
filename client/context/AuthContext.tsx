@@ -97,7 +97,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(authReducer, initialState);
  useEffect(() => {
   const token = localStorage.getItem("auth_token");
-  const user = localStorage.getItem("auth_user");
+  const user = localStorage.getItem("user");
   const refreshToken = localStorage.getItem("refresh_token");
 
   if (token && user) {
@@ -124,7 +124,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // store in locastoreage
       localStorage.setItem("auth_token", token);
       localStorage.setItem("refresh_token", refreshToken);
-      localStorage.setItem('auth_user',JSON.stringify(user))
+      localStorage.setItem('user',JSON.stringify(user))
       // Decode token
       const decoded: any = jwtDecode(token);
 
@@ -185,7 +185,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = () => {
     localStorage.removeItem("auth_token");
     localStorage.removeItem("refresh_token");
-    localStorage.removeItem("auth_user");
+    localStorage.removeItem("user");
     dispatch({ type: "LOGOUT" });
   };
 

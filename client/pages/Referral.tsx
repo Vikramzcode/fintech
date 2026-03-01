@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { GlassCard } from "@/components/common/GlassCard";
-import { Copy, Check, Gift, TrendingUp } from "lucide-react";
+import { Copy, Check, Gift, TrendingUp, User } from "lucide-react";
 import { formatCurrency } from "@/utils/formatting";
 import { apiClient } from "@/services/api";
 import { ReferralResponse } from "@/types/referral.types.tsx";
@@ -18,10 +18,10 @@ const [mockReferralData, setMockReferralData] = useState<ReferralResponse | null
 useEffect(() => {
   const fetchReferralData = async () => {
     try {
+      console.log(User)
       const res = await apiClient.get<any>(
         `/referrals/${user.id}`
       )
-      console.log(res.data)
       setMockReferralData(res.data)
       console.log(mockReferralData)
     } catch (error) {
@@ -40,7 +40,7 @@ useEffect(() => {
         <div>
           <h1 className="text-3xl font-bold mb-2">Referral Program</h1>
           <p className="text-muted-foreground">
-            Earn rewards by referring your friends
+            Earn  rewards by referring your friends
           </p>
         </div>
 
