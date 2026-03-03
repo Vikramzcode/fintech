@@ -13,6 +13,7 @@ import { AppLayout } from "@/components/common/AppLayout";
 import Landing from "@/pages/Landing";
 import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
+import VerifyEmail from "@/pages/VerifyEmail";
 import Dashboard from "@/pages/Dashboard";
 import Deposit from "@/pages/Deposit";
 import Withdraw from "@/pages/Withdraw";
@@ -70,6 +71,8 @@ function AppRoutes() {
           </AuthRoute>
         }
       />
+      {/* Verify-email is accessible after signup — not wrapped in AuthRoute */}
+      <Route path="/verify-email" element={<VerifyEmail />} />
 
       {/* Protected Routes with Layout */}
       <Route

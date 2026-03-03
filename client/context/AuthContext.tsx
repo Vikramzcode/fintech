@@ -1,6 +1,7 @@
 import { apiClient } from "@/services/api";
-import React, { createContext, useContext, useReducer, ReactNode,useEffect } from "react";
+import React, { createContext, useContext, useReducer, ReactNode, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
+import { SignupRequest } from "@/services/auth.service";
 export interface User {
   id: string;
   email: string;
@@ -30,7 +31,7 @@ type AuthAction =
   | { type: "LOGIN_FAIL"; payload: string }
   | { type: "LOGOUT" }
   | { type: "SIGNUP_START" }
-  | { type: "SIGNUP_SUCCESS"; payload: User }
+  | { type: "SIGNUP_SUCCESS" }
   | { type: "SIGNUP_FAIL"; payload: string }
   | { type: "CLEAR_ERROR" };
 
@@ -59,11 +60,11 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
         error: null,
       };
     case "SIGNUP_SUCCESS":
+      // Email not verified yet — do NOT set isAuthenticated
       return {
         ...state,
         isLoading: false,
-        isAuthenticated: true,
-        user: action.payload,
+        isAuthenticated: false,
         error: null,
       };
     case "LOGIN_FAIL":
@@ -85,7 +86,7 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
 
 interface AuthContextType extends AuthState {
   login: (email: string, password: string) => Promise<void>;
-  signup: (email: string, password: string, name: string) => Promise<void>;
+  signup: (email: string, password: string, name: string, phone: string) => Promise<void>;
   logout: () => void;
   clearError: () => void;
 }
@@ -120,32 +121,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         password,
       });
 
-      const { user,  token, refreshToken } = res.data;
-      // store in locastoreage
+      const { token, refreshToken } = res.data;
+      // store in localStorage
       localStorage.setItem("auth_token", token);
       localStorage.setItem("refresh_token", refreshToken);
-      localStorage.setItem('user',JSON.stringify(user))
       // Decode token
       const decoded: any = jwtDecode(token);
 
       // decoded will look like:
       // { userId, iat, exp }
 
-      const authuser: User = {
+      const user: User = {
         id: decoded.userId,
         email: email,
         name: res.data.user.name,
         accountStatus: res.data.user.accountStatus,
-        createdAt: new Date(decoded.iat * 1000),
-        referralCode: "",
+        createdAt: new Date(res.data.user.createdAt),
+        referralCode: res.data.user.referralCode ?? "",
       };
 
-      console.log(authuser.accountStatus);
+      // Update localStorage with the correct user object
+      localStorage.setItem("user", JSON.stringify(user));
 
       dispatch({
         type: "LOGIN_SUCCESS",
         payload: {
-          authuser,
+          user,
           token,
           refreshToken,
         } as any,
@@ -159,26 +160,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const signup = async (email: string, password: string, name: string) => {
+  const signup = async (email: string, password: string, name: string, phone: string) => {
     dispatch({ type: "SIGNUP_START" });
     try {
-      // TODO: Replace with actual API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      const mockUser: User = {
-        id: "user-" + Math.random().toString(36).substr(2, 9),
-        email,
-        name,
-        accountStatus: "inactive",
-        createdAt: new Date(),
-        referralCode:
-          "REF" + Math.random().toString(36).substr(2, 9).toUpperCase(),
-      };
-      dispatch({ type: "SIGNUP_SUCCESS", payload: mockUser });
-    } catch (error) {
+      const payload: SignupRequest = { email, password, name, phone };
+      await apiClient.post("/auth/register", payload);
+      // Store email so the verify-email page can pre-fill it
+      sessionStorage.setItem("pending_verify_email", email);
+      dispatch({ type: "SIGNUP_SUCCESS" });
+    } catch (error: any) {
       dispatch({
         type: "SIGNUP_FAIL",
-        payload: error instanceof Error ? error.message : "Signup failed",
+        payload:
+          error?.message ||
+          (error instanceof Error ? error.message : "Signup failed"),
       });
+      throw error;
     }
   };
 
