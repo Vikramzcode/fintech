@@ -2,13 +2,14 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { GlassCard } from "@/components/common/GlassCard";
-import { Mail, Lock, User, LogIn } from "lucide-react";
+import { Mail, Lock, User, Phone, LogIn } from "lucide-react";
 
 export default function Signup() {
   const navigate = useNavigate();
   const { signup, isLoading, error, clearError } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [localError, setLocalError] = useState("");
@@ -28,8 +29,8 @@ export default function Signup() {
     }
 
     try {
-      await signup(email, password, name);
-      navigate("/login");
+      await signup(email, password, name, phone);
+      navigate("/verify-email");
     } catch (err) {
       // Error is handled by context
     }
@@ -50,13 +51,28 @@ export default function Signup() {
 
           {(error || localError) && (
             <div className="bg-loss/20 border border-loss/30 text-loss px-4 py-3 rounded-lg text-sm">
-              {error || localError}
+              <div>{error || localError}</div>
+              {/* If email already registered, it means they signed up but haven't verified yet */}
+              {(error || "").toLowerCase().includes("already registered") && (
+                <div className="mt-2 text-xs text-muted-foreground">
+                  Already signed up?{" "}
+                  <a
+                    href="/verify-email"
+                    className="text-primary font-semibold hover:underline"
+                    onClick={() => {
+                      sessionStorage.setItem("pending_verify_email", email);
+                    }}
+                  >
+                    Click here to verify your email →
+                  </a>
+                </div>
+              )}
               <button
                 onClick={() => {
                   clearError();
                   setLocalError("");
                 }}
-                className="ml-2 font-semibold hover:underline"
+                className="mt-1 text-xs font-semibold hover:underline block"
               >
                 Dismiss
               </button>
@@ -74,6 +90,23 @@ export default function Signup() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="John Trader"
+                  className="w-full bg-input border border-white/10 rounded-lg pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                  required
+                  disabled={isLoading}
+                />
+              </div>
+            </div>
+
+            {/* Phone Input */}
+            <div>
+              <label className="block text-sm font-medium mb-2">Phone Number</label>
+              <div className="relative">
+                <Phone className="absolute left-3 top-3 text-muted-foreground" size={18} />
+                <input
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="+1 234 567 8900"
                   className="w-full bg-input border border-white/10 rounded-lg pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
                   required
                   disabled={isLoading}

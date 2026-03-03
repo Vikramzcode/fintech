@@ -10,10 +10,17 @@ export interface SignupRequest {
   email: string;
   password: string;
   name: string;
+  phone: string;
+}
+
+export interface SignupResponse {
+  message: string;
+  userId: string;
 }
 
 export interface AuthResponse {
   token: string;
+  refreshToken: string;
   user: User;
 }
 
@@ -31,13 +38,9 @@ class AuthService {
     }
   }
 
-  async signup(data: SignupRequest): Promise<AuthResponse> {
+  async signup(data: SignupRequest): Promise<SignupResponse> {
     try {
-      // TODO: Replace with actual API endpoint
-      const response = await apiClient.post<AuthResponse>("/auth/signup", data);
-      if (response.data.token) {
-        localStorage.setItem("auth_token", response.data.token);
-      }
+      const response = await apiClient.post<SignupResponse>("/auth/register", data);
       return response.data;
     } catch (error) {
       throw error;
