@@ -16,18 +16,19 @@ export interface DepositResponse {
 
 export interface WithdrawalRequest {
   amount: number;
-  type: "profit" | "principal";
-  accountDetails: {
-    bankName?: string;
-    accountNumber?: string;
-    upiId?: string;
-  };
+  type: "PROFIT" | "PRINCIPAL";
 }
 
 export interface WithdrawalResponse {
-  ticketId: string;
-  status: "pending" | "approved" | "rejected";
-  timestamp: Date;
+  id: string;
+  type: string;
+  requested_amount: number;
+  platform_fee: number;
+  penalty_fee: number;
+  net_amount: number;
+  status: string;
+  ticket_raised_date: string;
+  created_at: string;
 }
 
 class WalletService {
@@ -63,12 +64,11 @@ class WalletService {
 
   async initiateWithdrawal(data: WithdrawalRequest): Promise<WithdrawalResponse> {
     try {
-      // TODO: Replace with actual API endpoint
-      const response = await apiClient.post<WithdrawalResponse>(
-        "/wallet/withdrawal",
+      const response = await apiClient.post<{ success: boolean; message: string; data: WithdrawalResponse }>(
+        "/withdrawals/request",
         data
       );
-      return response.data;
+      return response.data.data;
     } catch (error) {
       throw error;
     }
