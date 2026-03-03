@@ -13,7 +13,15 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await login(email, password);
+      const result = await login(email, password);
+      
+      // Check if 2FA is required
+      if (result?.requires2FA && result?.tempToken) {
+        navigate("/verify-2fa", { state: { tempToken: result.tempToken } });
+        return;
+      }
+      
+      // Otherwise navigate to dashboard
       navigate("/dashboard");
     } catch (err) {
       // Error is handled by context

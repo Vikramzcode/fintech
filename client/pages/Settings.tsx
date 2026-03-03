@@ -1,9 +1,11 @@
 import { useAuth } from "@/context/AuthContext";
 import { GlassCard } from "@/components/common/GlassCard";
 import { User, Lock, Bell, LogOut } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function Settings() {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <main className="p-4 lg:p-8 lg:ml-64 min-h-screen">
@@ -65,7 +67,10 @@ export default function Settings() {
             <span className="text-muted-foreground">→</span>
           </button>
 
-          <button className="w-full text-left p-4 bg-card/50 hover:bg-card border border-white/10 rounded-lg transition-colors flex items-center justify-between">
+          <button
+            onClick={() => navigate("/security/enable-2fa")}
+            className="w-full text-left p-4 bg-card/50 hover:bg-card border border-white/10 rounded-lg transition-colors flex items-center justify-between"
+          >
             <div>
               <p className="font-semibold text-sm">Two-Factor Authentication</p>
               <p className="text-xs text-muted-foreground mt-1">

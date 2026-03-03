@@ -85,10 +85,11 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
 }
 
 interface AuthContextType extends AuthState {
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<{ requires2FA?: boolean; tempToken?: string }>;
   signup: (email: string, password: string, name: string, phone: string) => Promise<void>;
   logout: () => void;
   clearError: () => void;
+  updateAuthAfter2FA: (token: string, refreshToken: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -116,12 +117,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     dispatch({ type: "LOGIN_START" });
 
     try {
-      const res = await apiClient.post<LoginResponse>("/auth/login", {
+      const res = await apiClient.post<any>("/auth/login", {
         email,
         password,
       });
 
       console.log(res.data);
+
+      // Check if 2FA is required
+      if (res.data.message === "Enter 2FA code" && res.data.tempToken) {
+        dispatch({ type: "CLEAR_ERROR" });
+        return { requires2FA: true, tempToken: res.data.tempToken };
+      }
 
       const { token, refreshToken } = res.data;
       // store in localStorage
@@ -153,12 +160,75 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           refreshToken,
         } as any,
       });
+
+      return { requires2FA: false };
     } catch (error) {
       console.log(error);
       dispatch({
         type: "LOGIN_FAIL",
         payload: error instanceof Error ? error.message : "Login Failed",
       });
+      throw error;
+    }
+  };
+
+  const updateAuthAfter2FA = async (token: string, refreshToken: string) => {
+    try {
+      // store in localStorage
+      localStorage.setItem("auth_token", token);
+      localStorage.setItem("refresh_token", refreshToken);
+      
+      // Decode token to get user info
+      const decoded: any = jwtDecode(token);
+
+      // Fetch user details  
+      try {
+        const userRes = await apiClient.get(`/users/profile`);
+        
+        const user: User = {
+          id: userRes.data.id,
+          email: userRes.data.email,
+          name: userRes.data.name,
+          accountStatus: userRes.data.status,
+          createdAt: new Date(userRes.data.created_at),
+          referralCode: userRes.data.referral_code ?? "",
+        };
+
+        localStorage.setItem("user", JSON.stringify(user));
+
+        dispatch({
+          type: "LOGIN_SUCCESS",
+          payload: {
+            user,
+            token,
+            refreshToken,
+          } as any,
+        });
+      } catch (err) {
+        // If profile fetch fails, create basic user object from token
+        const user: User = {
+          id: decoded.userId,
+          email: "",
+          name: "",
+          accountStatus: "active",
+          createdAt: new Date(),
+          referralCode: "",
+        };
+
+        localStorage.setItem("user", JSON.stringify(user));
+
+        dispatch({
+          type: "LOGIN_SUCCESS",
+          payload: {
+            user,
+            token,
+            refreshToken,
+          } as any,
+        });
+      }
+    } catch (error) {
+      console.error("Failed to update auth after 2FA:", error);
+      throw error;
     }
   };
 
@@ -198,6 +268,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     signup,
     logout,
     clearError,
+    updateAuthAfter2FA,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

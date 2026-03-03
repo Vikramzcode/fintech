@@ -41,14 +41,14 @@ class ApiService {
 
         const message =
           error.response?.data instanceof Object
-            ? (error.response.data as any).message
+            ? (error.response.data as any).error || (error.response.data as any).message
             : error.message;
 
-        return Promise.reject({
-          status: error.response?.status,
-          message: message || "An error occurred",
-          data: error.response?.data,
-        });
+        const errorObj = new Error(message || "An error occurred");
+        (errorObj as any).status = error.response?.status;
+        (errorObj as any).data = error.response?.data;
+        
+        return Promise.reject(errorObj);
       },
     );
   }

@@ -14,6 +14,9 @@ import Landing from "@/pages/Landing";
 import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
 import VerifyEmail from "@/pages/VerifyEmail";
+import Verify2FA from "@/pages/Verify2FA";
+import Enable2FA from "@/pages/Enable2FA";
+import Confirm2FA from "@/pages/Confirm2FA";
 import Dashboard from "@/pages/Dashboard";
 import Deposit from "@/pages/Deposit";
 import Withdraw from "@/pages/Withdraw";
@@ -73,6 +76,8 @@ function AppRoutes() {
       />
       {/* Verify-email is accessible after signup — not wrapped in AuthRoute */}
       <Route path="/verify-email" element={<VerifyEmail />} />
+      {/* 2FA verification during login */}
+      <Route path="/verify-2fa" element={<Verify2FA />} />
 
       {/* Protected Routes with Layout */}
       <Route
@@ -86,6 +91,9 @@ function AppRoutes() {
         <Route path="/referral" element={<Referral />} />
         <Route path="/history" element={<History />} />
         <Route path="/settings" element={<Settings />} />
+        {/* 2FA setup pages - protected */}
+        <Route path="/security/enable-2fa" element={<Enable2FA />} />
+        <Route path="/security/confirm-2fa" element={<Confirm2FA />} />
       </Route>
 
       {/* Redirect root to dashboard if authenticated, otherwise to landing */}
