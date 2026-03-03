@@ -21,7 +21,7 @@ export function Header({ isDarkMode, onToggleDarkMode }: HeaderProps) {
         <div className="flex items-center gap-4">
           {user && (
             <StatusBadge
-              status={user.accountStatus === "active" ? "active" : "pending"}
+              status={user.accountStatus === "ACTIVE" ? "active" :"pending"}
             />
           )}
 

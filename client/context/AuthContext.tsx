@@ -121,6 +121,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         password,
       });
 
+      console.log(res.data);
+
       const { token, refreshToken } = res.data;
       // store in localStorage
       localStorage.setItem("auth_token", token);
