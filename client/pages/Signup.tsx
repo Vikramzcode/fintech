@@ -30,7 +30,7 @@ export default function Signup() {
 
     try {
       await signup(email, password, name, phone);
-      navigate("/verify-email");
+      navigate("/dashboard");
     } catch (err) {
       // Error is handled by context
     }
