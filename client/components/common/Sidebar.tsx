@@ -11,6 +11,7 @@ import {
   Settings,
   LogOut,
   Menu,
+  Bot,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -33,6 +34,11 @@ const navItems = [
     label: "Withdraw",
     href: "/wallet/withdraw",
     icon: TrendingUp,
+  },
+  {
+    label: "Activate Robot",
+    href: "/robot/activate",
+    icon: Bot,
   },
   {
     label: "Referral",
@@ -59,7 +65,7 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
 
   const handleNav = (href: string, label: string) => {
     if (
-      (label === "Deposit" || label === "Withdraw") &&
+      (label === "Deposit" || label === "Withdraw" || label === "Activate Robot") &&
       user?.accountStatus === "inactive"
     ) {
       setActivationModalOpen(true);

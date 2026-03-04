@@ -20,6 +20,7 @@ import Confirm2FA from "@/pages/Confirm2FA";
 import Dashboard from "@/pages/Dashboard";
 import Deposit from "@/pages/Deposit";
 import Withdraw from "@/pages/Withdraw";
+import RobotActivation from "@/pages/RobotActivation";
 import Referral from "@/pages/Referral";
 import History from "@/pages/History";
 import Settings from "@/pages/Settings";
@@ -88,6 +89,7 @@ function AppRoutes() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/wallet/deposit" element={<Deposit />} />
         <Route path="/wallet/withdraw" element={<Withdraw />} />
+        <Route path="/robot/activate" element={<RobotActivation />} />
         <Route path="/referral" element={<Referral />} />
         <Route path="/history" element={<History />} />
         <Route path="/settings" element={<Settings />} />
